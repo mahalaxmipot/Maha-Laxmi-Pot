@@ -1,0 +1,392 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="loader.css">
+<style>
+  :root {
+    --primary-color: #2c3e50;
+    --accent-color: #e74c3c;
+    --gold: #f1c40f;
+    --light-gray: #f5f5f5;
+    --dark-gray: #333;
+    --border-radius: 10px;
+    --box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  body {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+    padding: 20px;
+  }
+  
+  #loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  .header-img {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto 20px;
+    display: block;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+  }
+  
+  #ticketInfo {
+    background: #fff;
+    border-radius: var(--border-radius);
+    padding: 25px;
+    box-shadow: var(--box-shadow);
+    max-width: 600px;
+    margin: 0 auto 80px;
+    position: relative;
+    border: 2px solid var(--primary-color);
+  }
+  
+  #ticketInfo::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 20px;
+    width: 40px;
+    height: 20px;
+    background: #fff;
+    border-top: 2px solid var(--primary-color);
+    border-left: 2px solid var(--primary-color);
+    border-right: 2px solid var(--primary-color);
+    border-radius: 100px 100px 0 0;
+    transform: translateX(-50%);
+  }
+  
+  #ticketInfo::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    right: 20px;
+    width: 40px;
+    height: 20px;
+    background: #fff;
+    border-bottom: 2px solid var(--primary-color);
+    border-left: 2px solid var(--primary-color);
+    border-right: 2px solid var(--primary-color);
+    border-radius: 0 0 100px 100px;
+    transform: translateX(50%);
+  }
+  
+  #ticketInfo h2 {
+    color: var(--primary-color);
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 24px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 2px dashed var(--primary-color);
+    padding-bottom: 10px;
+  }
+  
+  #ticketInfo p {
+    margin: 10px 0;
+    font-size: 16px;
+    color: var(--dark-gray);
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px dotted #ccc;
+    padding-bottom: 8px;
+  }
+  
+  #ticketInfo p strong {
+    font-weight: bold;
+    color: var(--primary-color);
+  }
+  
+  #walletCoins {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--primary-color);
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 30px;
+    font-weight: bold;
+    box-shadow: var(--box-shadow);
+    z-index: 100;
+  }
+  
+  .prize-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: var(--light-gray);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+  }
+  
+  .prize-table th {
+    background: var(--primary-color);
+    color: white;
+    padding: 12px;
+    text-align: left;
+  }
+  
+  .prize-table tr:nth-child(even) {
+    background-color: #e9ecef;
+  }
+  
+  .prize-table td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .prize-table tr:last-child td {
+    border-bottom: none;
+  }
+  
+  .btnbhaia {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+    z-index: 100;
+  }
+  
+  .btn {
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(231, 76, 60, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .btn:hover {
+    background: #c0392b;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(231, 76, 60, 0.5);
+  }
+  
+  .btn:active {
+    transform: translateY(1px);
+  }
+  
+  #customAlert {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 30px;
+    border-radius: var(--border-radius);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+  }
+  
+  #alertContent {
+    margin-bottom: 20px;
+    font-size: 18px;
+    color: var(--primary-color);
+  }
+  
+  #customAlert button {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 30px;
+    border-radius: 30px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  #customAlert button:hover {
+    background: #1a2530;
+  }
+  
+  .ticket-number {
+    font-size: 28px;
+    color: var(--accent-color);
+    font-weight: bold;
+    text-align: center;
+    margin: 15px 0;
+    letter-spacing: 2px;
+    background: #fff9e6;
+    padding: 10px;
+    border: 2px dashed var(--gold);
+    border-radius: 8px;
+  }
+  
+  .date-badge {
+    position: absolute;
+    top: -15px;
+    right: 20px;
+    background: var(--gold);
+    color: var(--dark-gray);
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-weight: bold;
+    box-shadow: var(--box-shadow);
+  }
+  
+  .tickets-left {
+    background: var(--accent-color);
+    color: white;
+    display: inline-block;
+    padding: 5px 15px;
+    border-radius: 20px;
+    margin-left: 10px;
+    font-size: 14px;
+  }
+  
+  @media only screen and (min-width: 768px) {
+    body {
+      padding: 40px;
+    }
+    
+    #ticketInfo {
+      padding: 35px;
+    }
+    
+    #ticketInfo h2 {
+      font-size: 28px;
+    }
+  
+    .btn {
+      width: auto;
+      min-width: 250px;
+    }
+  }
+</style>
+
+<div id="loader"><div class="loader"></div></div>
+
+<img src="https://i.ibb.co/ZpqncP2y/ticket.png" class="header-img" alt="Lottery Ticket">
+
+<div id="ticketInfo"></div>
+<div id="walletCoins"></div>
+
+<div class="btnbhaia">
+  <button onclick="buyTicket()" class="btn">Buy Ticket</button>
+</div>
+
+<div id="customAlert">
+  <div id="alertContent"></div>
+  <div class="ticket-number" id="ticketNumberDisplay"></div>
+  <button onclick="confirmBuy()">Confirm Purchase</button>
+</div>
+
+<script>
+  let ticketData = {};
+  let ticketNumber = "";
+  const ticketId = localStorage.getItem("ticket_id");
+  const phone = Number(localStorage.getItem("l_local"));
+
+  if (!ticketId || !phone) {
+    alert("Ticket or user not found");
+    location.href = "index.html";
+  }
+
+  function formatDateTime(dateString) {
+    const date = new Date(dateString);
+    const months = ["January", "February", "March", "April", "May", "June", "July",
+                    "August", "September", "October", "November", "December"];
+    const month = months[date.getMonth()];
+    const day = date.getDate();
+    let hours = date.getHours();
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12 || 12;
+    return `${month} ${day} - ${hours}:${minutes} ${ampm}`;
+  }
+
+  fetch(`https://script.google.com/macros/s/AKfycbzTJK2KMcgv6JSlnDW-eZ2horePK-AHaHsgmHYEeGUhwrbYlwbX0EFHO8I8-gv7HAee/exec?ticket_id=${ticketId}`)
+    .then(res => res.json())
+    .then(data => {
+      if (data.error) {
+        document.getElementById("ticketInfo").innerText = data.error;
+      } else {
+        ticketData = data;
+        const dateStr = formatDateTime(data.time);
+        document.getElementById("ticketInfo").innerHTML = `
+          <div class="date-badge">${dateStr}</div>
+          <h2>${data.title}</h2>
+          <p><strong>Fee:</strong> ${data.fee}</p>
+          <p><strong>Tickets Left:</strong> <span class="tickets-left">${data.left}</span></p>
+          <table class="prize-table">
+            <tr><th>Prize</th><th>Position</th></tr>
+            ${data.prize.split(",").map((p, i) => `<tr><td>${p}</td><td>${data.position.split(",")[i]}</td></tr>`).join("")}
+          </table>
+        `;
+      }
+      document.getElementById("loader").style.display = "none";
+    });
+
+  fetch(`https://script.google.com/macros/s/AKfycbzTJK2KMcgv6JSlnDW-eZ2horePK-AHaHsgmHYEeGUhwrbYlwbX0EFHO8I8-gv7HAee/exec?checkWallet=true&phone=${phone}`)
+    .then(res => res.json())
+    .then(data => {
+      if (data.wallet !== undefined) {
+        document.getElementById("walletCoins").style.display = "block";
+        document.getElementById("walletCoins").innerHTML = `<span>🪙 ${data.wallet}</span>`;
+      }
+    });
+
+  function buyTicket() {
+    if (Number(ticketData.left) <= 0) {
+      alert("Tickets are sold out!");
+      return;
+    }
+    ticketNumber = Math.floor(100000 + Math.random() * 900000).toString();
+    document.getElementById("alertContent").innerText = `Your Lucky Ticket Number:`;
+    document.getElementById("ticketNumberDisplay").innerText = ticketNumber;
+    document.getElementById("customAlert").style.display = "block";
+  }
+
+  function confirmBuy() {
+    document.getElementById("loader").style.display = "flex";
+    fetch(`https://script.google.com/macros/s/AKfycbzTJK2KMcgv6JSlnDW-eZ2horePK-AHaHsgmHYEeGUhwrbYlwbX0EFHO8I8-gv7HAee/exec?purchaseTicket=true&ticket_id=${ticketId}&phone=${phone}&ticket_number=${ticketNumber}`)
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("customAlert").style.display = "none";
+        document.getElementById("loader").style.display = "none";
+        if (data.success) {
+          alert(`Ticket purchased successfully!`);
+          location.reload();
+        } else {
+          alert(data.error);
+        }
+      });
+  }
+</script>

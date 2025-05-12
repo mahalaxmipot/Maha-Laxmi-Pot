@@ -1,0 +1,57 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="loader.css">
+<link rel="stylesheet" href="desktop.css">
+<link rel="stylesheet" href="mobile.css">
+<style>
+  * { overflow-x: hidden; }
+  #loader { display: flex; }
+  .green { background-color: #008000; }
+  .red { background-color: #ff0000; }
+  .card { cursor: pointer; display: flex; flex-direction: column; padding: 15px 10px; background: #eee; border-radius: 8px; margin: 5px 10px; }
+  .status { cursor: text; font-size: 17px; font-weight: 700; color: #fff; position: absolute; right: 10px; margin: -15px 0 0 0; padding: 5px 20px; border-radius: 0 8px 8px 8px; }
+  #data { display: flex; flex-direction: column-reverse; }
+  .card > div { display: flex; flex-direction: column; gap: 2px; }
+  .card > div > span { font-size: 17px; }
+  .header { background: #007bff; padding: 10px; text-align: center; }
+  .header > h1 { font-size: 16px; color: #fff; }
+  @media only screen and (min-width: 768px) {
+    .card { margin: 10px 20%; }
+    .status { right: 20%; }
+  }
+</style>
+<div class="header">
+  <h1>Ticket</h1>
+</div>
+<div id="loader"><div class="loader"></div></div>
+<div id="data"></div>
+
+<script>
+  const phone = localStorage.getItem("l_local");
+  fetch("https://script.google.com/macros/s/AKfycbwCGB-EedZq3q7W9luab540Sl3cw_xacW6CDzQrq3eyvYOsxnbi-GpkFh7baa04jhoi/exec?action=getPurchase")
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById("loader").style.display = "none";
+      const filtered = data.filter(row => row[0] == phone);
+      const container = document.getElementById("data");
+      filtered.forEach(row => {
+        const ticket = row[1];
+        const fee = row[3];
+        const win = row[4];
+        const amount = win === "" ? `-${fee}` : win;
+        const statusClass = win === "" ? 'red' : 'green';
+
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <div>
+            <span><strong>Ticket Number</strong> ${ticket}</span>
+            <span><strong>Joining Fee</strong> ₹${fee}</span>
+          </div>
+          <span class="status ${statusClass}">Win ${amount}</span>
+        `;
+        container.appendChild(card);
+      });
+    });
+</script>

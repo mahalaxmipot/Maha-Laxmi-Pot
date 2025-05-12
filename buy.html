@@ -1,0 +1,127 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="loader.css">
+<link rel="stylesheet" href="desktop.css">
+<link rel="stylesheet" href="mobile.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css">
+<style>
+  .btn-group .selected { background-color: #007bff; color: #fff; font-weight: 500; }
+  .green { background-color: #008000; }
+  .red { background-color: #ff0000; }
+  .orange { background-color: #ffa500; }
+  #cardContainer { display: flex; flex-direction: column-reverse; }
+  .form { display: flex; padding: 10px; flex-direction: column; }
+  .btn-group { display: flex; justify-content: space-around; margin: 10px 0; }
+  .btn-group > button { width: 105px; padding: 10px; border-radius: 25px; }
+  .card { cursor: pointer; display: flex; flex-direction: column; padding: 15px 10px; background: #eee; border-radius: 8px; margin: 10px; }
+  .status { cursor: text; width: 70px; text-align: center; font-size: 17px; font-weight: 700; color: #fff; position: absolute; right: 10px; margin: -15px 0 0 0; padding: 5px 20px; border-radius: 0 8px 8px 8px; }
+  #data { display: flex; flex-direction: column; gap: 10px; }
+  .card > div { display: flex; flex-direction: column; gap: 2px; }
+  .card > div > span { font-size: 17px; }
+  h2 { font-weight: 400; margin: 10px; }
+  .header { background: #007bff; padding: 10px; text-align: center; }
+  .header > h1 { font-size: 16px; color: #fff; }
+  i { overflow: hidden; }
+  .head > a { display: flex; align-items: center; gap: 10px; padding: 10px 20px; font-size: 16px; font-weight: 500; border-radius: 8px; }
+  .head { display: flex; justify-content: space-between; padding: 10px 15px; }
+  @media only screen and (min-width: 768px) {
+    .head { margin: 0 25%; }
+    .int , .btn { width: 50%; }
+    .btn-group { margin: 15px 0; gap: 10%; }
+    .btn-group > button { width: 225px; padding: 12px; }
+    #cardContainer { margin: 0 25%; }
+    .status { right: 26%; }
+    h2 { margin: 0 26%; }
+  }
+</style>
+<div class="header">
+  <h1>Recharge</h1>
+</div>
+<div class="head">
+  <a href="buy.html" style="background-color: #007bff; color: #fff;"><i class="fa-solid fa-coins"></i> Recharge</a>
+  <a href="withdraw.html"><i class="fa-solid fa-wallet"></i> Withdraw</a>
+</div>
+<div class="form">
+<input type="number" id="amount" class="int" placeholder="Enter amount" />
+
+<div class="btn-group">
+  <button onclick="selectMethod(this, 'PhonePe')">PhonePe</button>
+  <button onclick="selectMethod(this, 'GPay')">GPay</button>
+  <button onclick="selectMethod(this, 'Paytm')">Paytm</button>
+</div>
+
+<button onclick="next()" class="btn">Next</button>
+</div>
+<h2>Previous Requests</h2>
+<div id="loader"><div class="loader"></div></div>
+<div id="cardContainer"></div>
+
+<script>
+  let selectedMethod = "";
+
+  function selectMethod(button, method) {
+    selectedMethod = method;
+    const buttons = document.querySelectorAll('.btn-group button');
+    buttons.forEach(btn => btn.classList.remove('selected'));
+    button.classList.add('selected');
+  }
+
+  function next() {
+    const amount = document.getElementById("amount").value;
+    if (!amount || amount <= 0) {
+      alert("Please enter a valid amount.");
+      return;
+    }
+    if (!selectedMethod) {
+      alert("Please select a payment method.");
+      return;
+    }
+    localStorage.setItem("am", amount);
+    localStorage.setItem("pay_method", selectedMethod);
+    location.href = "coins.html";
+  }
+
+  function loadPrevious() {
+    const phone = localStorage.getItem("l_local");
+    if (!phone) return;
+
+    document.getElementById("loader").style.display = "flex";
+
+    fetch("https://script.google.com/macros/s/AKfycbz1AODAOyEjn42vepcTzVIal9jSpgrzXe1QfVJatrQo-Otkw9Ii2o6aXcaU_Xh4gyXj/exec?action=getCoins")
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("loader").style.display = "none";
+        const container = document.getElementById("cardContainer");
+        container.innerHTML = "";
+        data.forEach(row => {
+          if (row[0] == phone) {
+            const card = document.createElement("div");
+            card.className = "card";
+
+            const amount = document.createElement("div");
+            amount.innerHTML = `<strong>Amount:</strong> ₹${row[1]}`;
+
+            const status = document.createElement("div");
+            status.className = "status";
+            if (row[3] === "Accept") {
+              status.textContent = "Accept";
+              status.classList.add("green");
+            } else if (row[3] === "Reject") {
+              status.textContent = "Reject";
+              status.classList.add("red");
+            } else {
+              status.textContent = "Pending";
+              status.classList.add("orange");
+            }
+
+            card.appendChild(amount);
+            card.appendChild(status);
+            container.appendChild(card);
+          }
+        });
+      });
+  }
+
+  window.onload = loadPrevious;
+</script>

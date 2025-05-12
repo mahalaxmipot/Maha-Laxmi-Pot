@@ -1,0 +1,99 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="loader.css">
+<link rel="stylesheet" href="desktop.css">
+<link rel="stylesheet" href="mobile.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css">
+<style>
+  .header { background: #007bff; padding: 10px; text-align: center; }
+  .header > h1 { font-size: 16px; color: #fff; }
+  i { overflow: hidden; }
+  .head > a { display: flex; align-items: center; gap: 10px; padding: 10px 20px; font-size: 16px; font-weight: 500; border-radius: 8px; }
+  .head { display: flex; justify-content: space-between; padding: 10px 15px; }
+  #withdrawForm { display: flex; flex-direction: column; padding: 15px; gap: 10px; }
+  @media only screen and (min-width: 768px) {
+    .head , #withdrawForm { margin: 0 25%; }
+  }
+</style>
+<div id="loader" style="display:none;"><div class="loader"></div></div>
+<div class="header">
+  <h1>Withdraw</h1>
+</div>
+<div class="head">
+  <a href="buy.html"><i class="fa-solid fa-coins"></i> Recharge</a>
+  <a href="withdraw.html" style="background-color: #007bff; color: #fff;"><i class="fa-solid fa-wallet"></i> Withdraw</a>
+</div>
+<form id="withdrawForm">
+  <input type="text" id="upiId" name="upiId" placeholder="UPI ID" class="int" required>
+  <input type="number" id="amount" placeholder="Amount" name="amount" class="int" required>
+  <button type="submit" class="btn">Withdraw</button>
+</form>
+
+<script>
+  document.getElementById('withdrawForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const phone = localStorage.getItem('l_local');
+    const upiId = document.getElementById('upiId').value;
+    const amount = parseFloat(document.getElementById('amount').value);
+
+    if (!phone || !upiId || !amount) {
+      alert("Please fill all fields.");
+      return;
+    }
+
+    document.getElementById('loader').style.display = 'flex';
+
+    fetch('https://script.google.com/macros/s/AKfycbyMRf6kVv3nVUeoy3QOsMZ52RurLiEwZ-dM9QZ2zmbbALPjuQGHAB6TkibIitVwitO0/exec?sheet=Users')
+      .then(response => response.json())
+      .then(data => {
+        let userFound = false;
+        let userWallet = 0;
+
+        data.forEach(row => {
+          if (String(row[1]) === phone) {
+            userFound = true;
+            userWallet = parseFloat(row[3]);
+          }
+        });
+
+        if (!userFound) {
+          alert("User not found.");
+          document.getElementById('loader').style.display = 'none';
+          return;
+        }
+
+        if (userWallet < amount) {
+          alert("Not enough balance.");
+          document.getElementById('loader').style.display = 'none';
+          return;
+        }
+
+        const newBalance = userWallet - amount;
+
+        fetch('https://script.google.com/macros/s/AKfycbyMRf6kVv3nVUeoy3QOsMZ52RurLiEwZ-dM9QZ2zmbbALPjuQGHAB6TkibIitVwitO0/exec', {
+          method: 'POST',
+          body: JSON.stringify({
+            action: 'deductAndSaveWithdrawData',
+            phone: phone,
+            amount: amount,
+            upiId: upiId,
+            newBalance: newBalance
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            alert("Withdraw successful!");
+            document.getElementById('loader').style.display = 'none';
+            location.reload();
+          } else {
+            alert("Failed to process withdrawal.");
+            document.getElementById('loader').style.display = 'none';
+            location.reload();
+          }
+        });
+      });
+  });
+</script>

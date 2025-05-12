@@ -1,0 +1,84 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="loader.css">
+<link rel="stylesheet" href="desktop.css">
+<link rel="stylesheet" href="mobile.css">
+<style>
+  #loader { display: none; }
+  .header-img { background: linear-gradient(45deg , #0000ff , #800080); }
+  .sign-text { display: flex; gap: 10px; margin-bottom: 10px; flex-direction: column; }
+  @media only screen and (min-width: 768px) {
+    .form { flex-direction: row; }
+  }
+</style>
+<form id="loginForm" class="form">
+  <div class="header-img">
+    <img src="https://i.ibb.co/32XQgch/login.png" alt="">
+  </div>
+  <div class="form-area">
+    <div class="sign-text">
+      <h2>Sign In</h2>
+      <p>Buy Digital Lottery And Increase Wealth Suddenly.</p>
+    </div>
+    <input type="number" name="phone" class="int" placeholder="Phone" required>
+    <input type="password" name="password" class="int" placeholder="Password" required>
+    <button type="submit" class="btn">Login</button>
+    <div class="dont">
+      <p>Don't Have Account? <a href="signup.html">Signup</a></p>
+    </div>
+  </div>
+</form>
+
+<div id="loader"><div class="loader"></div></div>
+<p id="response"></p>
+<script>
+  if (localStorage.getItem("l_local")) {
+    window.location.href = "index.html";
+  }
+
+  const form = document.getElementById('loginForm');
+  const responseText = document.getElementById('response');
+  const loader = document.getElementById('loader');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+    const phone = formData.get('phone');
+    const password = formData.get('password');
+
+    if (!/^\d{10}$/.test(phone)) {
+      alert("Enter Valid Mobile Number");
+      return;
+    }
+
+    const data = {
+      phone: Number(phone),
+      password: password
+    };
+
+    loader.style.display = 'flex';
+    responseText.innerText = '';
+
+    try {
+      const res = await fetch('https://script.google.com/macros/s/AKfycbw8qvi3Ci079LqSUwNsVNDhueT0km1qsn1VyRY6awPDVJ3wpcqQYAVIJXbgOZa-Uw0q/exec', {
+        method: 'POST',
+        body: JSON.stringify(data)
+      });
+
+      const result = await res.text();
+      loader.style.display = 'none';
+
+      if (result === "Login Success") {
+        localStorage.setItem("l_local", data.phone);
+        window.location.href = "index.html";
+      } else {
+        alert(result);
+      }
+    } catch (err) {
+      loader.style.display = 'none';
+      responseText.innerText = 'Login failed';
+    }
+  });
+</script>
