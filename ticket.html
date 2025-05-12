@@ -332,7 +332,7 @@
     return `${month} ${day} - ${hours}:${minutes} ${ampm}`;
   }
 
-  fetch(`https://script.google.com/macros/s/AKfycbzTJK2KMcgv6JSlnDW-eZ2horePK-AHaHsgmHYEeGUhwrbYlwbX0EFHO8I8-gv7HAee/exec?ticket_id=${ticketId}`)
+  fetch(`https://script.google.com/macros/s/AKfycbw3f743s2jGT1mqKlq0_bs6L2rWJ-qRqKq-1Xfrf-RPNV7VJnfqkFMXmm6d5M-IT6bY/exec?ticket_id=${ticketId}`)
     .then(res => res.json())
     .then(data => {
       if (data.error) {
@@ -354,7 +354,7 @@
       document.getElementById("loader").style.display = "none";
     });
 
-  fetch(`https://script.google.com/macros/s/AKfycbzTJK2KMcgv6JSlnDW-eZ2horePK-AHaHsgmHYEeGUhwrbYlwbX0EFHO8I8-gv7HAee/exec?checkWallet=true&phone=${phone}`)
+  fetch(`https://script.google.com/macros/s/AKfycbw3f743s2jGT1mqKlq0_bs6L2rWJ-qRqKq-1Xfrf-RPNV7VJnfqkFMXmm6d5M-IT6bY/exec?checkWallet=true&phone=${phone}`)
     .then(res => res.json())
     .then(data => {
       if (data.wallet !== undefined) {
@@ -376,7 +376,7 @@
 
   function confirmBuy() {
     document.getElementById("loader").style.display = "flex";
-    fetch(`https://script.google.com/macros/s/AKfycbzTJK2KMcgv6JSlnDW-eZ2horePK-AHaHsgmHYEeGUhwrbYlwbX0EFHO8I8-gv7HAee/exec?purchaseTicket=true&ticket_id=${ticketId}&phone=${phone}&ticket_number=${ticketNumber}`)
+    fetch(`https://script.google.com/macros/s/AKfycbw3f743s2jGT1mqKlq0_bs6L2rWJ-qRqKq-1Xfrf-RPNV7VJnfqkFMXmm6d5M-IT6bY/exec?purchaseTicket=true&ticket_id=${ticketId}&phone=${phone}&ticket_number=${ticketNumber}`)
       .then(res => res.json())
       .then(data => {
         document.getElementById("customAlert").style.display = "none";
